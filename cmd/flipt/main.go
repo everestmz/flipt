@@ -469,10 +469,10 @@ func run(_ []string) error {
 
 		emptyVersion := semver.Version{}
 
-		if cv.Validate() != nil && cv.GE(emptyVersion) {
+		if cv.Validate() == nil && cv.GT(emptyVersion) {
 			info.Version = cv.FinalizeVersion()
 		}
-		if lv.Validate() != nil && cv.GE(emptyVersion) {
+		if lv.Validate() == nil && lv.GT(emptyVersion) {
 			info.LatestVersion = lv.FinalizeVersion()
 		}
 		if updateAvailable {
