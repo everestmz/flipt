@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"io"
 	"net/http"
 	"os"
 	"strings"
@@ -241,6 +242,7 @@ const (
 	metaCheckForUpdates = "meta.check_for_updates"
 )
 
+// Load loads the config from a file
 func Load(path string) (*Config, error) {
 	viper.SetEnvPrefix("FLIPT")
 	viper.SetEnvKeyReplacer(strings.NewReplacer(".", "_"))
@@ -252,6 +254,25 @@ func Load(path string) (*Config, error) {
 		return nil, fmt.Errorf("loading configuration: %w", err)
 	}
 
+	return load()
+}
+
+// loadReader loads the config from a reader
+// Used for testing
+//nolint
+func loadReader(r io.Reader) (*Config, error) {
+	viper.SetEnvPrefix("FLIPT")
+	viper.SetEnvKeyReplacer(strings.NewReplacer(".", "_"))
+	viper.AutomaticEnv()
+
+	if err := viper.ReadConfig(r); err != nil {
+		return nil, fmt.Errorf("loading configuration: %w", err)
+	}
+
+	return load()
+}
+
+func load() (*Config, error) {
 	cfg := Default()
 
 	// Logging
